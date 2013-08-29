@@ -28,20 +28,15 @@ $ ->
   window.turn = 1
 
   $('li').on 'click', ->
-    if window.turn is 1
-      $(@).find('div').css 'background', 'white'
-      transformNeighbors(@)
-      checkForGameOver()
-      window.turn = 2
-    else
-      $(@).find('div').css 'background', 'black'
-      transformNeighbors(@)
-      checkForGameOver()
-      window.turn = 1
+    square = $(@).find 'div'
+    possess square
+    transformNeighbors @
+    checkForGameOver()
+    if whitesTurn() then window.turn = 2 else window.turn = 1
 
 transformNeighbors = (that) ->
-  row = $(that).data('row')
-  col = $(that).data('col')
+  row = $(that).data 'row'
+  col = $(that).data 'col'
 
   $above = shift (row - 1), col
   $left  = shift row, (col - 1)
@@ -50,17 +45,16 @@ transformNeighbors = (that) ->
 
   neighbors = [$above, $left, $right, $below]
 
-  possess(square) for square in neighbors when enemy(square)
+  possess square for square in neighbors when enemy square
 
 checkForGameOver = ->
-  allsquares = $('li').find('div')
+  allsquares = $('li').find 'div'
   num = 0
-  for square in allsquares when green(square)
-    num++
+  num++ for square in allsquares when green square
   alert 'Game Over' if num is 0
 
 shift = (row, col) ->
-  $('li[data-row="' + row + '"][data-col="' + col + '"]').find('div')
+  $('li[data-row="' + row + '"][data-col="' + col + '"]').find 'div'
 
 enemy = (direction) ->
   if whitesTurn() then color = 'rgb(0, 0, 0)' else color = 'rgb(255, 255, 255)'
@@ -69,12 +63,9 @@ enemy = (direction) ->
 whitesTurn = ->
   window.turn is 1
 
-blacksTurn = ->
-  window.turn is 2
-
 possess = (square) ->
   if whitesTurn() then color = 'white' else color = 'black'
-  square.css('background-color', color)
+  square.css 'background-color', color
 
 green = (square) ->
   $(square).css('background-color') is 'rgb(0, 128, 0)'
